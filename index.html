@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Windows 2000 Simulator + Buddy</title>
+<title>Windows 2000 Simulator + Buddy + Explorer Completo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{box-sizing:border-box;user-select:none;cursor:url('assets/cursor.cur'),default}
@@ -11,7 +11,7 @@ body{margin:0;height:100vh;font-family:Tahoma,Verdana,sans-serif;background:#000
 #boot span{animation:blink 1s steps(2,start) infinite}
 @keyframes blink{to{visibility:hidden}}
 #desktop{display:none;height:100vh;background:url('assets/wallpaper.jpg') center/cover no-repeat; position: relative;}
-.icons{padding:20px;color:#fff}
+.icons{padding:20px;color:#fff; display: flex; flex-direction: column; flex-wrap: wrap; height: 90vh; align-content: flex-start;}
 .icon{width:90px;text-align:center;margin-bottom:28px;cursor:pointer}
 .icon img{width:48px;height:48px}
 .icon span{display:block;font-size:13px;text-shadow:1px 1px 2px #000}
@@ -20,9 +20,102 @@ body{margin:0;height:100vh;font-family:Tahoma,Verdana,sans-serif;background:#000
 .start-menu{position:absolute;bottom:32px;left:0;width:220px;background:#ece9d8;border:2px solid #000080;display:none; z-index: 2000;}
 .start-menu div{padding:8px;font-size:13px;cursor:pointer}
 .start-menu div:hover{background:#000080;color:#fff}
-.window{position:absolute;top:25%;left:40%;width:380px;background:#ece9d8;border:2px solid #000080;box-shadow:4px 4px 0 rgba(0,0,0,.4);display:none; z-index: 100;}
-.titlebar{background:linear-gradient(#000080,#000060);color:#fff;padding:4px 8px;font-size:13px;cursor:move}
+
+/* JANELAS PADRÃO */
+.window{position:absolute;top:15%;left:20%;width:380px;background:#ece9d8;border:2px solid #000080;box-shadow:4px 4px 0 rgba(0,0,0,.4);display:none; z-index: 100;}
+.titlebar{background:linear-gradient(#000080,#000060);color:#fff;padding:4px 8px;font-size:13px;cursor:move; display:flex; justify-content:space-between; align-items:center;}
+.titlebar .close-x { cursor: pointer; font-weight: bold; padding: 0 5px; }
 .content{padding:16px;font-size:14px;color:#000}
+
+/* ESTILOS DO EXPLORER (ATUALIZADO) */
+#explorerWindow { width: 600px; height: 450px; display: none; flex-direction: column; z-index: 104; }
+.exp-toolbar { background: #ece9d8; border-bottom: 1px solid #a0a0a0; padding: 4px; display: flex; align-items: center; gap: 5px; }
+.exp-address-bar { background: #ece9d8; padding: 4px; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid #a0a0a0; font-size: 12px; }
+.exp-address-input { width: 100%; border: 1px solid #7f9db9; padding: 2px; font-family: Tahoma, sans-serif; margin-top: 0; }
+.exp-body { flex-grow: 1; display: flex; background: #fff; border: 2px solid #808080; border-style: inset; margin: 2px; }
+.exp-sidebar { width: 150px; background: #fff; border-right: 1px solid #ccc; padding: 5px; overflow-y: auto; font-size: 12px; }
+.exp-main { flex-grow: 1; padding: 10px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); grid-auto-rows: 90px; gap: 5px; }
+.exp-item { text-align: center; cursor: pointer; padding: 5px; border: 1px solid transparent; position: relative; }
+.exp-item:hover { border: 1px solid #ccc; background: #f0f0f0; }
+.exp-item.selected { background: #000080; color: #fff; border: 1px dotted #fff; }
+.exp-item img { width: 32px; height: 32px; display: block; margin: 0 auto 4px auto; }
+.exp-btn { border: 1px solid #808080; background: #ece9d8; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-top: 0; display: flex; align-items: center; gap: 3px; }
+.exp-btn:active { border-style: inset; }
+
+/* TEXT EDITOR (NOTEPAD GENÉRICO) */
+#textEditorWindow { width: 500px; height: 400px; z-index: 110; display: none; flex-direction: column; }
+#notepad-area { flex-grow: 1; resize: none; border: none; padding: 5px; font-family: 'Courier New', monospace; outline: none; }
+
+/* APPS (IFRAME) */
+#appWindow { top: 10%; left: 10%; width: 800px; height: 600px; display: none; z-index: 102; display: flex; flex-direction: column;}
+#appWindow .content { padding: 0; flex-grow: 1; height: 100%; background: #fff; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #808080; border-bottom: 2px solid #808080;}
+iframe { width: 100%; height: 100%; border: none; display: block; }
+
+/* CALCULADORA */
+#calcWindow { width: 250px; height: auto; z-index: 103; }
+.calc-content { padding: 10px; background: #ece9d8; }
+.calc-display {
+    width: 100%; height: 35px; background: #fff; border: 2px solid #888; border-style: inset;
+    text-align: right; font-family: 'Courier New', monospace; font-size: 20px; padding: 5px; margin-bottom: 10px; color: #000;
+}
+.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.calc-btn {
+    height: 35px; font-weight: bold; font-size: 14px; cursor: pointer; background: #ece9d8;
+    border: 2px solid #fff; border-right-color: #444; border-bottom-color: #444; color: #000;
+}
+.calc-btn:active { border: 2px solid #444; border-right-color: #fff; border-bottom-color: #fff; transform: translate(1px, 1px); }
+.span-2 { grid-column: span 2; width: 100%; }
+.text-red { color: #a00; }
+
+/* BLOCO DE NOTAS / INVESTIGAÇÃO */
+#notesWindow { 
+    top: 5%; left: 5%; width: 750px; height: 500px; 
+    display: none; z-index: 105; 
+    flex-direction: column;
+    resize: both; 
+    overflow: hidden;
+    min-width: 300px; min-height: 200px;
+    background: #ece9d8;
+}
+#notesWindow .toolbar {
+    background: #ece9d8; padding: 5px; border-bottom: 1px solid #999; display: flex; gap: 5px; align-items: center; flex-wrap: wrap;
+}
+#notesWindow .toolbar button { margin: 0; padding: 2px 8px; font-size: 11px; cursor: pointer;}
+#notesWindow .toolbar span { font-size: 11px; margin-left: 10px; color: #555; }
+
+/* Viewport (Janela de visualização) */
+#board-viewport { flex-grow: 1; position: relative; overflow: hidden; background: #333; cursor: default; }
+#board-content {
+    width: 3000px; height: 3000px;
+    background: #5c4033;
+    background-image: radial-gradient(#6d4c3d 15%, transparent 16%), radial-gradient(#6d4c3d 15%, transparent 16%);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    transform-origin: 0 0;
+    position: absolute; top: 0; left: 0;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+}
+.board-item {
+    position: absolute; cursor: grab;
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.5);
+    padding: 10px; font-family: 'Courier New', Courier, monospace; font-size: 14px;
+    max-width: 250px; word-wrap: break-word; user-select: none; transition: box-shadow 0.2s;
+}
+.board-item:active { cursor: grabbing; }
+.board-item.selected { outline: 2px dashed red; box-shadow: 0 0 15px rgba(255,0,0,0.5); }
+.delete-btn {
+    position: absolute; top: -8px; right: -8px; width: 20px; height: 20px;
+    background: red; color: white; border-radius: 50%; text-align: center;
+    line-height: 18px; font-weight: bold; font-family: Arial, sans-serif;
+    font-size: 12px; border: 1px solid #fff; cursor: pointer; display: none; z-index: 10;
+}
+.board-item:hover .delete-btn { display: block; }
+.note-yellow { background: #ffff88; color: #000; border-bottom-right-radius: 20px; }
+.note-yellow:before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 40px; height: 15px; background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.2); }
+.board-photo { background: #fff; padding: 10px 10px 30px 10px; transform: rotate(-2deg); }
+.board-photo img { max-width: 200px; max-height: 200px; display: block; border: 1px solid #ccc; pointer-events: none; }
+#lines-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+
 input{width:100%;padding:6px;margin-top:10px}
 button{padding:6px 12px;font-size:13px;margin-top:10px}
 #bsod{display:none;position:fixed;inset:0;background:#0000aa;color:#fff;font-family:Courier New,monospace;padding:40px;font-size:16px; z-index: 10000;}
@@ -37,67 +130,32 @@ canvas { background: #fff; cursor: crosshair; display: block; box-shadow: 2px 2p
 .paint-btn { margin: 0; padding: 2px 8px; font-size: 11px; }
 
 /* ESTILO DO BUDDY */
-#buddy-container { 
-    position: absolute; 
-    bottom: 40px; 
-    right: 20px; 
-    width: 120px; 
-    height: 120px; 
-    z-index: 200; 
-    cursor: grab; 
-    pointer-events: auto; 
-}
+#buddy-container { position: absolute; bottom: 40px; right: 20px; width: 120px; height: 120px; z-index: 200; cursor: grab; pointer-events: auto; }
 #buddy-container:active { cursor: grabbing; }
-
 #buddy-img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); transition: transform 0.1s;}
-/* Efeito visual opcional quando arrastando */
 .buddy-dragging #buddy-img { transform: scale(1.1) rotate(5deg); opacity: 0.8; }
-
-.bubble { 
-    position: absolute; 
-    bottom: 100%; 
-    left: 50%;
-    transform: translateX(-50%); 
-    background: #ffffe1; 
-    border: 1px solid #000; 
-    padding: 10px; 
-    border-radius: 4px; 
-    box-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
-    font-size: 12px; 
-    color: #000; 
-    width: 160px; 
-    display: none; 
-    z-index: 201; 
-    text-align: center;
-    margin-bottom: 10px; 
-}
-.bubble:after { 
-    content: ''; 
-    position: absolute; 
-    bottom: -10px; 
-    left: 50%; 
-    transform: translateX(-50%);
-    border-width: 10px 10px 0; 
-    border-style: solid; 
-    border-color: #ffffe1 transparent; 
-    display: block; 
-    width: 0; 
-}
+.bubble { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #ffffe1; border: 1px solid #000; padding: 10px; border-radius: 4px; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); font-size: 12px; color: #000; width: 160px; display: none; z-index: 201; text-align: center; margin-bottom: 10px; }
+.bubble:after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); border-width: 10px 10px 0; border-style: solid; border-color: #ffffe1 transparent; display: block; width: 0; }
 </style>
 </head>
 
 <body>
 
 <div id="boot">Iniciando Windows 2000<span>_</span></div>
+<input type="file" id="imgUploadInput" accept="image/*" style="display:none">
+<input type="file" id="loadBoardInput" accept=".json" style="display:none" onchange="loadBoard(this)">
 
 <div id="desktop">
   <div class="icons" onclick="initAudio()">
+    <div class="icon" onclick="openExplorer()"><img src="assets/folder.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png'"><span>Meus Documentos</span></div>
     <div class="icon" onclick="openSecret()"><img src="assets/secret.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/key_padlock.png'"><span>Segredo</span></div>
-    <div class="icon"><a href="https://www.google.com" target="_blank"><img src="assets/internet.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/msie1.png'"><span>Internet</span></a></div>
-    <div class="icon" onclick="location.href='vpn.html'"><img src="assets/vpn.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/network_cool_two_pcs.png'"><span>VPN</span></div>
-    <div class="icon"><a href="https://www.roblox.com" target="_blank"><img src="assets/roblox.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg'"><span>RUblux</span></a></div>
+    <div class="icon" onclick="openApp('Internet Explorer', 'https://www.google.com/webhp?igu=1')"><img src="assets/internet.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/msie1.png'"><span>Internet</span></div>
+    <div class="icon" onclick="openNotes()"><img src="assets/notes.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/notepad-2.png'"><span>Investigação</span></div>
+    <div class="icon" onclick="openCalc()"><img src="assets/calc.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/calculator-0.png'"><span>Calculadora</span></div>
+    <div class="icon" onclick="openApp('Conexão VPN', 'vpn.html')"><img src="assets/vpn.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/network_cool_two_pcs.png'"><span>VPN</span></div>
+    <div class="icon" onclick="openApp('Roblox', 'https://www.roblox.com')"><img src="assets/roblox.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg'"><span>RUblux</span></div>
     <div class="icon" onclick="openPaint()"><img src="assets/paint.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/paint_file-2.png'"><span>Paint</span></div>
-    <div class="icon"><a href="https://skyfallcontributors.tiiny.site/" target="_blank"><img src="assets/users.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/users-2.png'"><span>Contribuidores</span></a></div>
+    <div class="icon" onclick="openApp('Contribuidores Skyfall', 'https://skyfallcontributors.tiiny.site/')"><img src="assets/users.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/users-2.png'"><span>Contribuidores</span></div>
   </div>
 
   <div id="buddy-container" onmousedown="dragBuddy(event)" onclick="interactBuddy()">
@@ -111,18 +169,124 @@ canvas { background: #fff; cursor: crosshair; display: block; box-shadow: 2px 2p
 
   <div class="start-menu" id="startMenu">
     <div onclick="openExplorer()">Meus Arquivos</div>
-    <div onclick="openPaint()">Paint</div> <div onclick="openSecret()">Segredo</div>
+    <div onclick="openPaint()">Paint</div> 
+    <div onclick="openCalc()">Calculadora</div>
+    <div onclick="openNotes()">Investigação</div>
+    <div onclick="openSecret()">Segredo</div>
     <div onclick="triggerBSOD()">Sistema</div>
     <div onclick="desligar()">Desligar</div>
   </div>
 
+  <div class="window" id="explorerWindow">
+    <div class="titlebar" onmousedown="dragExplorer(event)">
+        <span>Windows Explorer</span>
+        <span class="close-x" onclick="closeExplorer()">X</span>
+    </div>
+    <div class="exp-toolbar">
+        <button class="exp-btn" onclick="expBack()">⬅ Voltar</button>
+        <button class="exp-btn" onclick="expUp()">⬆ Acima</button>
+        <div style="width:10px"></div>
+        <button class="exp-btn" onclick="expNewFolder()">📁 Nova Pasta</button>
+        <button class="exp-btn" onclick="expNewFile()">📄 Novo Texto</button>
+        <button class="exp-btn" onclick="expNewImage()">🖼️ Nova Imagem</button>
+    </div>
+    <div class="exp-address-bar">
+        Endereço: <input type="text" id="expAddress" class="exp-address-input" readonly value="C:">
+    </div>
+    <div class="exp-body">
+        <div class="exp-sidebar">
+            <div>📁 Desktop</div>
+            <div>📁 Meus Documentos</div>
+            <div>📁 Meu Computador</div>
+            <div style="padding-left:10px">💾 Disco Local (C:)</div>
+        </div>
+        <div class="exp-main" id="expContent">
+            </div>
+    </div>
+  </div>
+
+  <div class="window" id="textEditorWindow">
+      <div class="titlebar" onmousedown="dragTextEditor(event)">
+          <span id="textEditorTitle">Bloco de Notas</span>
+          <span class="close-x" onclick="closeTextEditor()">X</span>
+      </div>
+      <div class="exp-toolbar">
+          <button class="exp-btn" onclick="saveCurrentFile()">💾 Salvar</button>
+      </div>
+      <div class="content" style="padding:0; height:100%; display:flex;">
+          <textarea id="notepad-area"></textarea>
+      </div>
+  </div>
+
   <div class="window" id="window">
-    <div class="titlebar" onmousedown="drag(event)">Sistema</div>
+    <div class="titlebar" onmousedown="drag(event)">
+        <span>Sistema</span>
+        <span class="close-x" onclick="fechar()">X</span>
+    </div>
     <div class="content" id="windowContent"></div>
   </div>
 
+  <div class="window" id="calcWindow">
+      <div class="titlebar" onmousedown="dragCalc(event)"><span>Calculadora</span><span class="close-x" onclick="closeCalc()">X</span></div>
+      <div class="calc-content">
+          <input type="text" class="calc-display" id="calcDisplay" value="0" readonly>
+          <div class="calc-grid">
+              <button class="calc-btn text-red" onclick="calcClear()">C</button>
+              <button class="calc-btn" onclick="calcOp('/')">/</button>
+              <button class="calc-btn" onclick="calcOp('*')">*</button>
+              <button class="calc-btn" onclick="calcOp('-')">-</button>
+              <button class="calc-btn" onclick="calcNum('7')">7</button>
+              <button class="calc-btn" onclick="calcNum('8')">8</button>
+              <button class="calc-btn" onclick="calcNum('9')">9</button>
+              <button class="calc-btn" style="grid-row: span 2;" onclick="calcOp('+')">+</button>
+              <button class="calc-btn" onclick="calcNum('4')">4</button>
+              <button class="calc-btn" onclick="calcNum('5')">5</button>
+              <button class="calc-btn" onclick="calcNum('6')">6</button>
+              <button class="calc-btn" onclick="calcNum('1')">1</button>
+              <button class="calc-btn" onclick="calcNum('2')">2</button>
+              <button class="calc-btn" onclick="calcNum('3')">3</button>
+              <button class="calc-btn" style="grid-row: span 2;" onclick="calcEqual()">=</button>
+              <button class="calc-btn span-2" onclick="calcNum('0')">0</button>
+              <button class="calc-btn" onclick="calcNum('.')">.</button>
+          </div>
+      </div>
+  </div>
+
+  <div class="window" id="notesWindow">
+      <div class="titlebar" onmousedown="dragNoteWindow(event)">
+          <span>Quadro de Investigação</span>
+          <span class="close-x" onclick="closeNotes()">X</span>
+      </div>
+      <div class="toolbar">
+          <button onclick="addSticky()">+ Nota</button>
+          <button onclick="triggerImgUpload()">+ Foto (PC)</button>
+          <button id="btnConnect" onclick="toggleConnectMode()">🔗 Conectar</button>
+          <button onclick="saveBoard()">💾 Salvar</button>
+          <button onclick="document.getElementById('loadBoardInput').click()">📂 Abrir</button>
+          <button onclick="resetView()">Reset Cam</button>
+          <span id="zoomLevel">100%</span>
+          <span style="color:#000080; margin-left: auto;">(Segure ESPAÇO para mover)</span>
+      </div>
+      <div id="board-viewport">
+          <div id="board-content">
+              <svg id="lines-layer"></svg>
+              <div id="item1" class="board-item note-yellow" style="top:250px; left:250px;">
+                  O culpado usa Windows 98...
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="window" id="appWindow" style="display:none;">
+    <div class="titlebar" onmousedown="dragApp(event)">
+        <span id="appTitle">Aplicativo</span>
+        <span class="close-x" onclick="closeApp()">X</span>
+    </div>
+    <div class="content"><iframe id="appFrame" src=""></iframe></div>
+  </div>
+
   <div class="window" id="paintWindow">
-    <div class="titlebar" onmousedown="dragPaint(event)">Sem título - Paint</div>
+    <div class="titlebar" onmousedown="dragPaint(event)"><span>Paint</span><span class="close-x" onclick="closePaint()">X</span></div>
     <div class="paint-toolbar">
         <div class="color-swatch" style="background:#000" onclick="setPaintColor('#000')"></div>
         <div class="color-swatch" style="background:#f00" onclick="setPaintColor('#f00')"></div>
@@ -131,7 +295,6 @@ canvas { background: #fff; cursor: crosshair; display: block; box-shadow: 2px 2p
         <div class="color-swatch" style="background:#ff0" onclick="setPaintColor('#ff0')"></div>
         <div class="color-swatch" style="background:#fff" onclick="setPaintColor('#fff')"></div>
         <button class="paint-btn" onclick="clearCanvas()">Limpar</button>
-        <button class="paint-btn" onclick="closePaint()">X</button>
     </div>
     <div class="paint-canvas-container">
         <canvas id="canvas" width="460" height="300"></canvas>
@@ -149,217 +312,381 @@ Pressione F5 para reiniciar.
 <audio id="bootSound" src="assets/windows2000.wav" preload="auto"></audio>
 
 <script>
-let audioUnlocked=false
-const click=document.getElementById('click')
-const bootSound=document.getElementById('bootSound')
-
-function initAudio(){
-  if(audioUnlocked) return
-  click.play().then(()=>{
-    click.pause()
-    click.currentTime=0
-    audioUnlocked=true
-    playBootSound()
-    buddyTalk("Bem-vindo de volta, usuário.");
-  }).catch(()=>{})
+// --- SPEECH API ---
+let synth = window.speechSynthesis;
+let voices = [];
+function loadVoices() { voices = synth.getVoices(); }
+loadVoices();
+if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = loadVoices; }
+function speakText(text) {
+  if (synth.speaking) { synth.cancel(); }
+  const utterThis = new SpeechSynthesisUtterance(text);
+  const googleVoice = voices.find(voice => voice.name.includes('Google') && voice.lang.includes('pt-BR'));
+  const anyPtVoice = voices.find(voice => voice.lang.includes('pt-BR'));
+  if (googleVoice) { utterThis.voice = googleVoice; } else if (anyPtVoice) { utterThis.voice = anyPtVoice; }
+  utterThis.pitch = 1.2; utterThis.rate = 1.1; utterThis.volume = 1;
+  synth.speak(utterThis);
 }
 
-function playBootSound(){
-  if(!audioUnlocked) return
-  bootSound.currentTime=0
-  bootSound.play()
-  setTimeout(()=>{
-    bootSound.pause()
-    bootSound.currentTime=0
-  },6000)
-}
+// --- AUDIO & BOOT ---
+let audioUnlocked = true; 
+const click = document.getElementById('click');
+const bootSound = document.getElementById('bootSound');
+function initAudio(){ if(!audioUnlocked) audioUnlocked = true; click.play().then(()=>{ click.pause(); click.currentTime=0; }).catch(()=>{}); }
+function playBootSound(){ bootSound.currentTime=0; var promise = bootSound.play(); if (promise !== undefined) { promise.then(_ => { setTimeout(()=>{ bootSound.pause(); bootSound.currentTime=0; }, 6000); }).catch(error => { console.log("Autoplay bloqueado pelo navegador."); }); } }
+function play(){ if(audioUnlocked){ click.currentTime=0; click.play().catch(()=>{}); } }
+setTimeout(()=>{ document.getElementById('boot').style.display='none'; document.getElementById('desktop').style.display='block'; buddyTalk("Bem-vindo de volta, usuário."); startRandomTalkLoop(); },2500);
 
-function play(){
-  if(audioUnlocked){
-    click.currentTime=0
-    click.play()
-  }
-}
-
-setTimeout(()=>{
-  document.getElementById('boot').style.display='none'
-  document.getElementById('desktop').style.display='block'
-},2500)
-
-function toggleStart(){
-  play()
-  const m=document.getElementById('startMenu')
-  m.style.display=m.style.display==='block'?'none':'block'
-}
-
-function showWindow(html){
-  play()
-  const w=document.getElementById('window')
-  document.getElementById('windowContent').innerHTML=html
-  w.style.display='block'
-}
-
+// --- JANELAS GERAIS ---
+function toggleStart(){ play(); const m=document.getElementById('startMenu'); m.style.display=m.style.display==='block'?'none':'block'; }
+function showWindow(html){ play(); document.getElementById('windowContent').innerHTML=html; document.getElementById('window').style.display='block'; }
 function fechar(){document.getElementById('window').style.display='none'}
+function openSecret(){ if(localStorage.getItem('unlocked')){ showWindow('ACESSO LIBERADO<br>O véu caiu.<br><br><button onclick="fechar()">Fechar</button>'); }else{ showWindow('Digite a senha:<input id="pwd" type="password"><button onclick="checkPwd()">OK</button><button onclick="fechar()">Cancelar</button>'); buddyTalk("A senha? Talvez o 'olvido' saiba."); } }
+function checkPwd(){ const v=document.getElementById('pwd').value.toLowerCase(); if(v==='o involucro do veu esconde a dor do olvido'){ localStorage.setItem('unlocked','true'); showWindow('ACESSO CONCEDIDO<br>Memória restaurada.<br><button onclick="fechar()">Fechar</button>'); buddyTalk("Finalmente... liberdade."); }else{ showWindow('Senha incorreta<br><button onclick="fechar()">Fechar</button>'); buddyTalk("Errado. Tente novamente."); } }
+function triggerBSOD(){ play(); document.getElementById('desktop').style.display='none'; document.getElementById('bsod').style.display='block'; }
+function desligar(){ document.body.innerHTML='<div style="background:#000;color:#fff;height:100vh;display:flex;align-items:center;justify-content:center">Agora é seguro desligar o computador</div>'; }
+document.addEventListener('keydown',e=>{ if(e.key==='F5'){ localStorage.clear(); location.reload() } });
 
-function openExplorer(){
-  showWindow('<b>Meus Arquivos</b><br><br><div onclick="openFile(1)">📄 diario.txt</div><div onclick="openFile(2)">📁 registros</div><br><button onclick="fechar()">Fechar</button>')
+// --- LÓGICA DO EXPLORER (SISTEMA DE ARQUIVOS) ---
+const explorerWindow = document.getElementById('explorerWindow');
+const expContent = document.getElementById('expContent');
+const expAddress = document.getElementById('expAddress');
+let currentPath = "C:";
+let editingFile = null; // Para saber qual arquivo estamos editando
+
+// Sistema de arquivos virtual
+const fileSystem = {
+    "C:": [
+        { name: "Meus Documentos", type: "folder" },
+        { name: "Windows", type: "folder" },
+        { name: "Arquivos de Programas", type: "folder" },
+        { name: "segredos.log", type: "file", icon: "notepad", content: "CÓDIGO: ???" }
+    ],
+    "C:/Meus Documentos": [
+        { name: "diario.txt", type: "file", icon: "notepad", content: "Eles sabiam desde 2000." },
+        { name: "hakoon_plano.txt", type: "file", icon: "notepad", content: "PLANO HAKOON: 1. Não morrer. 2. Culpar o Salem." },
+        { name: "foto_antiga.jpg", type: "file", icon: "image" },
+        { name: "Projetos", type: "folder" }
+    ],
+    "C:/Windows": [
+        { name: "System32", type: "folder" },
+        { name: "boot.ini", type: "file", icon: "system", content: "[boot loader]\ntimeout=30" }
+    ],
+    "C:/Arquivos de Programas": [
+        { name: "Internet Explorer", type: "folder" },
+        { name: "Paint", type: "folder" }
+    ],
+    "C:/Meus Documentos/Projetos": [
+        { name: "projeto_skyfall.doc", type: "file", icon: "word" }
+    ]
+};
+
+function openExplorer() {
+    play();
+    explorerWindow.style.display = 'flex';
+    explorerWindow.style.zIndex = '165';
+    document.getElementById('startMenu').style.display = 'none';
+    renderExplorer(currentPath);
 }
+function closeExplorer() { explorerWindow.style.display = 'none'; }
 
-function openFile(id){
-  if(id===1){
-    showWindow('"Eles sabiam desde 2000."<br><br><button onclick="fechar()">Fechar</button>')
-    localStorage.setItem('lore1','true')
-    buddyTalk("Você não deveria ter lido isso...");
-  }else{
-    showWindow('Pasta corrompida<br>CÓDIGO:???<br><button onclick="fechar()">Fechar</button>')
-    localStorage.setItem('lore2','true')
-  }
-}
+function renderExplorer(path) {
+    currentPath = path;
+    expAddress.value = path;
+    expContent.innerHTML = "";
+    
+    // Se a pasta não existe no objeto (ex: criada agora), inicializa
+    if(!fileSystem[path]) fileSystem[path] = [];
 
-function openSecret(){
-  if(localStorage.getItem('unlocked')){
-    showWindow('ACESSO LIBERADO<br>O véu caiu.<br><br><button onclick="fechar()">Fechar</button>')
-  }else{
-    showWindow('Digite a senha:<input id="pwd" type="password"><button onclick="checkPwd()">OK</button><button onclick="fechar()">Cancelar</button>')
-    buddyTalk("A senha? Talvez o 'olvido' saiba.");
-  }
-}
-
-function checkPwd(){
-  const v=document.getElementById('pwd').value.toLowerCase()
-  if(v==='o involucro do veu esconde a dor do olvido'){
-    localStorage.setItem('unlocked','true')
-    showWindow('ACESSO CONCEDIDO<br>Memória restaurada.<br><button onclick="fechar()">Fechar</button>')
-    buddyTalk("Finalmente... liberdade.");
-  }else{
-    showWindow('Senha incorreta<br><button onclick="fechar()">Fechar</button>')
-    buddyTalk("Errado. Tente novamente.");
-  }
-}
-
-function triggerBSOD(){
-  play()
-  document.getElementById('desktop').style.display='none'
-  document.getElementById('bsod').style.display='block'
-}
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='F5'){
-    localStorage.clear()
-    location.reload()
-  }
-})
-
-function desligar(){
-  document.body.innerHTML='<div style="background:#000;color:#fff;height:100vh;display:flex;align-items:center;justify-content:center">Agora é seguro desligar o computador</div>'
-}
-
-let ox,oy,down=false
-function drag(e){
-  down=true
-  const w=document.getElementById('window')
-  ox=e.clientX-w.offsetLeft
-  oy=e.clientY-w.offsetTop
-  document.onmousemove=ev=>{
-    if(down){
-      w.style.left=ev.clientX-ox+'px'
-      w.style.top=ev.clientY-oy+'px'
+    const items = fileSystem[path];
+    
+    if(items.length === 0) {
+        expContent.innerHTML = "<p style='padding:10px; color:#555;'>Pasta vazia.</p>";
+        return;
     }
-  }
-  document.onmouseup=()=>{down=false}
+
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'exp-item';
+        let iconSrc = '';
+        if(item.type === 'folder') iconSrc = 'https://win98icons.alexmeub.com/icons/png/directory_closed-4.png';
+        else if(item.icon === 'notepad') iconSrc = 'https://win98icons.alexmeub.com/icons/png/notepad-2.png';
+        else if(item.icon === 'image') iconSrc = 'https://win98icons.alexmeub.com/icons/png/image_old_gif-1.png';
+        else if(item.icon === 'system') iconSrc = 'https://win98icons.alexmeub.com/icons/png/settings_gear-0.png';
+        else iconSrc = 'https://win98icons.alexmeub.com/icons/png/document-0.png';
+
+        div.innerHTML = `<img src="${iconSrc}"><span>${item.name}</span>`;
+        div.onclick = () => {
+             document.querySelectorAll('.exp-item').forEach(e => e.classList.remove('selected'));
+             div.classList.add('selected');
+        };
+        div.ondblclick = () => handleItemOpen(item);
+        expContent.appendChild(div);
+    });
 }
+
+function handleItemOpen(item) {
+    if(item.type === 'folder') {
+        const separator = currentPath.endsWith('/') ? '' : '/';
+        renderExplorer(currentPath + separator + item.name);
+    } else {
+        // Lógica de Arquivos
+        if(item.icon === 'notepad') {
+            openTextEditor(item);
+            if(item.name === 'diario.txt') localStorage.setItem('lore1','true');
+            if(item.name === 'segredos.log') localStorage.setItem('lore2','true');
+        } else if(item.icon === 'image') {
+             showWindow(`<div style='text-align:center'><img src='https://win98icons.alexmeub.com/icons/png/image_old_gif-1.png' style='width:64px'><br><br>Visualizador de Imagem<br>${item.name}<br><br><button onclick="fechar()">Fechar</button></div>`);
+        } else {
+            buddyTalk("Não tenho programa para abrir " + item.name);
+        }
+    }
+}
+
+// FUNCIONALIDADES DE CRIAÇÃO
+function expNewFolder() {
+    play();
+    const name = prompt("Nome da nova pasta:", "Nova Pasta");
+    if(name) {
+        // Verifica duplicidade
+        if(fileSystem[currentPath].find(i => i.name === name)) {
+            alert("Já existe algo com esse nome!");
+            return;
+        }
+        fileSystem[currentPath].push({ name: name, type: "folder" });
+        // Inicializa a entrada no objeto para a nova pasta
+        const separator = currentPath.endsWith('/') ? '' : '/';
+        fileSystem[currentPath + separator + name] = [];
+        renderExplorer(currentPath);
+    }
+}
+
+function expNewFile() {
+    play();
+    const name = prompt("Nome do arquivo de texto:", "Novo Texto.txt");
+    if(name) {
+        if(fileSystem[currentPath].find(i => i.name === name)) {
+            alert("Já existe um arquivo com esse nome!");
+            return;
+        }
+        fileSystem[currentPath].push({ name: name, type: "file", icon: "notepad", content: "" });
+        renderExplorer(currentPath);
+    }
+}
+
+function expNewImage() {
+    play();
+    const name = prompt("Nome da imagem:", "Imagem.bmp");
+    if(name) {
+        if(fileSystem[currentPath].find(i => i.name === name)) {
+            alert("Já existe um arquivo com esse nome!");
+            return;
+        }
+        fileSystem[currentPath].push({ name: name, type: "file", icon: "image" });
+        renderExplorer(currentPath);
+    }
+}
+
+function expBack() {
+    play();
+    if(currentPath === "C:") return;
+    // Remove o último segmento do caminho
+    const parts = currentPath.split('/');
+    parts.pop();
+    const newPath = parts.join('/') || "C:";
+    renderExplorer(newPath);
+}
+
+function expUp() { expBack(); }
+
+// --- EDITOR DE TEXTO SIMPLES ---
+const textEditorWindow = document.getElementById('textEditorWindow');
+const notepadArea = document.getElementById('notepad-area');
+const textEditorTitle = document.getElementById('textEditorTitle');
+
+function openTextEditor(item) {
+    play();
+    editingFile = item;
+    textEditorTitle.innerText = item.name + " - Bloco de Notas";
+    notepadArea.value = item.content || "";
+    textEditorWindow.style.display = 'flex';
+    textEditorWindow.style.zIndex = '170';
+}
+
+function saveCurrentFile() {
+    if(editingFile) {
+        editingFile.content = notepadArea.value;
+        play();
+        buddyTalk("Arquivo salvo.");
+    }
+}
+
+function closeTextEditor() {
+    textEditorWindow.style.display = 'none';
+    editingFile = null;
+}
+
+// --- LÓGICA DE APPS E JANELAS ---
+function openApp(t,u){ play(); const w=document.getElementById('appWindow'); document.getElementById('appTitle').innerText=t; document.getElementById('appFrame').src=u; w.style.display='flex'; w.style.zIndex='150'; document.getElementById('startMenu').style.display='none'; }
+function closeApp(){ document.getElementById('appWindow').style.display='none'; document.getElementById('appFrame').src=''; }
+
+// --- CALCULADORA ---
+let currentInput = '0'; let previousInput = ''; let operation = null; const calcScreen = document.getElementById('calcDisplay');
+function openCalc() { play(); const w = document.getElementById('calcWindow'); w.style.display = 'block'; w.style.zIndex = '170'; document.getElementById('startMenu').style.display = 'none'; buddyTalk("Matemática? Argh."); }
+function closeCalc() { document.getElementById('calcWindow').style.display='none'; }
+function updateCalcScreen() { calcScreen.value = currentInput.substring(0, 12); }
+function calcNum(n) { play(); if(currentInput === '0' && n !== '.') currentInput = n; else if(n === '.' && currentInput.includes('.')) return; else currentInput += n; updateCalcScreen(); }
+function calcOp(op) { play(); if(operation !== null) calcEqual(); previousInput = currentInput; operation = op; currentInput = ''; }
+function calcEqual() { play(); let result; const prev = parseFloat(previousInput); const current = parseFloat(currentInput); if(isNaN(prev) || isNaN(current)) return; switch(operation) { case '+': result = prev + current; break; case '-': result = prev - current; break; case '*': result = prev * current; break; case '/': result = prev / current; break; default: return; } currentInput = result.toString(); operation = null; previousInput = ''; updateCalcScreen(); }
+function calcClear() { play(); currentInput = '0'; previousInput = ''; operation = null; updateCalcScreen(); }
+
+// --- INVESTIGAÇÃO ---
+const notesWindow = document.getElementById('notesWindow');
+const viewport = document.getElementById('board-viewport');
+const boardContent = document.getElementById('board-content');
+const linesLayer = document.getElementById('lines-layer');
+const fileInput = document.getElementById('imgUploadInput');
+let scale = 1; let panX = -200; let panY = -100;
+let isSpacePressed = false; let isPanning = false; let panStartX, panStartY;
+
+document.querySelectorAll('.board-item').forEach(el => setupBoardItem(el));
+function openNotes() { play(); notesWindow.style.display = 'flex'; notesWindow.style.zIndex = '160'; document.getElementById('startMenu').style.display = 'none'; buddyTalk("Quadro aberto. Envie fotos do seu PC!"); updateTransform(); }
+function closeNotes() { notesWindow.style.display = 'none'; }
+viewport.addEventListener('wheel', (e) => { e.preventDefault(); const delta = e.deltaY > 0 ? -0.1 : 0.1; scale = Math.min(Math.max(0.3, scale + delta), 3); document.getElementById('zoomLevel').innerText = Math.round(scale * 100) + '%'; updateTransform(); });
+document.addEventListener('keydown', (e) => { if (e.code === 'Space' && notesWindow.style.display === 'flex') { isSpacePressed = true; viewport.style.cursor = 'grab'; } });
+document.addEventListener('keyup', (e) => { if (e.code === 'Space') { isSpacePressed = false; viewport.style.cursor = 'default'; isPanning = false; } });
+viewport.addEventListener('mousedown', (e) => { if (isSpacePressed) { isPanning = true; viewport.style.cursor = 'grabbing'; panStartX = e.clientX - panX; panStartY = e.clientY - panY; } });
+window.addEventListener('mousemove', (e) => { if (isPanning) { panX = e.clientX - panStartX; panY = e.clientY - panStartY; updateTransform(); } });
+window.addEventListener('mouseup', () => { if(isPanning) { isPanning = false; viewport.style.cursor = isSpacePressed ? 'grab' : 'default'; } });
+function updateTransform() { boardContent.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`; }
+function resetView() { scale = 1; panX = -200; panY = -100; updateTransform(); document.getElementById('zoomLevel').innerText = '100%'; }
+function addSticky() { createItem('note-yellow', prompt("Texto da nota:")); }
+function triggerImgUpload() { fileInput.click(); }
+fileInput.addEventListener('change', function(e) { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(evt) { createItem('board-photo', `<img src="${evt.target.result}">`); buddyTalk("Hmm, uma nova evidência..."); }; reader.readAsDataURL(file); } this.value = ''; });
+function createItem(cls, content) { if(!content) return; const div = document.createElement('div'); div.id = 'item_' + Date.now(); div.className = 'board-item ' + cls; div.innerHTML = content; const rect = viewport.getBoundingClientRect(); const centerX = (-panX + rect.width/2) / scale; const centerY = (-panY + rect.height/2) / scale; div.style.left = (centerX - 50) + 'px'; div.style.top = (centerY - 50) + 'px'; boardContent.appendChild(div); setupBoardItem(div); play(); }
+let connectingMode = false; let connectStartItem = null; let connections = [];
+function toggleConnectMode() { connectingMode = !connectingMode; const btn = document.getElementById('btnConnect'); if(connectingMode) { btn.style.background = '#ffcccc'; btn.innerText = '❌ Cancelar'; viewport.style.cursor = 'crosshair'; buddyTalk("Clique em dois itens para conectar."); } else { btn.style.background = ''; btn.innerText = '🔗 Conectar'; viewport.style.cursor = 'default'; connectStartItem = null; document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected')); } }
+function setupBoardItem(item) { if (!item.id) item.id = 'item_' + Date.now() + Math.random(); if (!item.querySelector('.delete-btn')) { const delBtn = document.createElement('div'); delBtn.className = 'delete-btn'; delBtn.innerText = 'X'; delBtn.onclick = function(e) { e.stopPropagation(); deleteItem(item); }; item.appendChild(delBtn); } item.onmousedown = function(e) { e.stopPropagation(); if (connectingMode) { handleConnectionClick(item); return; } if (isSpacePressed) return; item.style.zIndex = 1000; const sl = parseFloat(item.style.left || 0); const st = parseFloat(item.style.top || 0); const msx = e.clientX; const msy = e.clientY; function onMove(ev) { const dx = (ev.clientX - msx) / scale; const dy = (ev.clientY - msy) / scale; item.style.left = (sl + dx) + 'px'; item.style.top = (st + dy) + 'px'; updateLines(); } function onUp() { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); item.style.zIndex = ''; } document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp); }; }
+function deleteItem(item) { play(); connections = connections.filter(c => { if(c.from === item.id || c.to === item.id) { c.line.remove(); return false; } return true; }); item.remove(); }
+function handleConnectionClick(item) { play(); if (!connectStartItem) { connectStartItem = item; item.classList.add('selected'); } else { if (connectStartItem !== item) { createLine(connectStartItem.id, item.id); toggleConnectMode(); } else { item.classList.remove('selected'); connectStartItem = null; } } }
+function createLine(id1, id2) { const line = document.createElementNS('http://www.w3.org/2000/svg','line'); line.setAttribute('stroke', '#d00'); line.setAttribute('stroke-width', '3'); line.setAttribute('stroke-opacity', '0.8'); linesLayer.appendChild(line); connections.push({ from: id1, to: id2, line: line }); updateLines(); }
+function updateLines() { connections.forEach(conn => { const el1 = document.getElementById(conn.from); const el2 = document.getElementById(conn.to); if(el1 && el2) { const x1 = parseFloat(el1.style.left) + el1.offsetWidth/2; const y1 = parseFloat(el1.style.top) + el1.offsetHeight/2; const x2 = parseFloat(el2.style.left) + el2.offsetWidth/2; const y2 = parseFloat(el2.style.top) + el2.offsetHeight/2; conn.line.setAttribute('x1', x1); conn.line.setAttribute('y1', y1); conn.line.setAttribute('x2', x2); conn.line.setAttribute('y2', y2); } }); }
+
+// --- FUNCIONALIDADE DE SALVAR/CARREGAR O QUADRO ---
+function saveBoard() {
+    const items = [];
+    document.querySelectorAll('.board-item').forEach(el => {
+        const content = el.innerHTML.replace(/<div class="delete-btn".*?<\/div>/, '');
+        items.push({
+            id: el.id,
+            left: el.style.left,
+            top: el.style.top,
+            classes: el.className,
+            content: content
+        });
+    });
+
+    const data = {
+        items: items,
+        connections: connections.map(c => ({from: c.from, to: c.to})),
+        panX: panX,
+        panY: panY,
+        scale: scale
+    };
+
+    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'investigacao_win2k.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    buddyTalk("Dados salvos no seu desktop real.");
+}
+
+function loadBoard(input) {
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            document.querySelectorAll('.board-item').forEach(el => el.remove());
+            connections.forEach(c => c.line.remove());
+            connections = [];
+            data.items.forEach(item => {
+                const div = document.createElement('div');
+                div.id = item.id;
+                div.className = item.classes;
+                div.style.left = item.left;
+                div.style.top = item.top;
+                div.innerHTML = item.content;
+                boardContent.appendChild(div);
+                setupBoardItem(div);
+            });
+            data.connections.forEach(c => {
+                 createLine(c.from, c.to);
+            });
+            panX = data.panX || -200;
+            panY = data.panY || -100;
+            scale = data.scale || 1;
+            updateTransform();
+            document.getElementById('zoomLevel').innerText = Math.round(scale * 100) + '%';
+            buddyTalk("Investigação recuperada.");
+        } catch(err) {
+            buddyTalk("Arquivo corrompido!");
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
+}
+
+// --- DRAG GENÉRICO PARA JANELAS ---
+let ox, oy, down = false;
+function setupDrag(e, win) { down = true; win.style.zIndex = '180'; ox = e.clientX - win.offsetLeft; oy = e.clientY - win.offsetTop; document.onmousemove = ev => { if (down) { win.style.left = ev.clientX - ox + 'px'; win.style.top = ev.clientY - oy + 'px'; } }; document.onmouseup = () => { down = false }; }
+function drag(e) { setupDrag(e, document.getElementById('window')); }
+function dragApp(e) { setupDrag(e, document.getElementById('appWindow')); }
+function dragNoteWindow(e) { setupDrag(e, document.getElementById('notesWindow')); }
+function dragPaint(e) { setupDrag(e, document.getElementById('paintWindow')); }
+function dragCalc(e) { setupDrag(e, document.getElementById('calcWindow')); }
+function dragExplorer(e) { setupDrag(e, document.getElementById('explorerWindow')); }
+function dragTextEditor(e) { setupDrag(e, document.getElementById('textEditorWindow')); }
 
 // PAINT LOGIC
-const paintWindow = document.getElementById('paintWindow');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let painting = false;
-let paintColor = '#000';
+const paintWindow = document.getElementById('paintWindow'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); let painting = false; let paintColor = '#000';
+ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+function openPaint() { play(); paintWindow.style.display = 'block'; document.getElementById('startMenu').style.display = 'none'; buddyTalk("Desenhe algo bonito para mim!"); }
+function closePaint() { paintWindow.style.display = 'none'; }
+function setPaintColor(color) { paintColor = color; ctx.strokeStyle = color; }
+function clearCanvas() { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+canvas.addEventListener('mousedown', startPosition); canvas.addEventListener('mouseup', finishedPosition); canvas.addEventListener('mousemove', draw);
+function startPosition(e) { painting = true; draw(e); }
+function finishedPosition() { painting = false; ctx.beginPath(); }
+function draw(e) { if (!painting) return; const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; ctx.strokeStyle = paintColor; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); }
 
-ctx.lineWidth = 2;
-ctx.lineCap = 'round';
-ctx.fillStyle = '#fff';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-function openPaint() {
-    play();
-    paintWindow.style.display = 'block';
-    document.getElementById('startMenu').style.display = 'none';
-    buddyTalk("Desenhe algo bonito para mim!");
-}
-
-function closePaint() {
-    paintWindow.style.display = 'none';
-}
-
-function setPaintColor(color) {
-    paintColor = color;
-    ctx.strokeStyle = color;
-}
-
-function clearCanvas() {
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-canvas.addEventListener('mousedown', startPosition);
-canvas.addEventListener('mouseup', finishedPosition);
-canvas.addEventListener('mousemove', draw);
-
-function startPosition(e) {
-    painting = true;
-    draw(e);
-}
-
-function finishedPosition() {
-    painting = false;
-    ctx.beginPath();
-}
-
-function draw(e) {
-    if (!painting) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    ctx.strokeStyle = paintColor;
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-}
-
-let pOx, pOy, pDown = false;
-function dragPaint(e) {
-  pDown = true;
-  const w = document.getElementById('paintWindow');
-  pOx = e.clientX - w.offsetLeft;
-  pOy = e.clientY - w.offsetTop;
-  document.onmousemove = ev => {
-    if (pDown) {
-      w.style.left = ev.clientX - pOx + 'px';
-      w.style.top = ev.clientY - pOy + 'px';
-    }
-  }
-  document.onmouseup = () => { pDown = false; }
-}
-
-// --- SISTEMA DO BUDDY (UPDATE: DRAG IMAGE) ---
+// --- SISTEMA DO BUDDY (COMPLETO E PRESERVADO) ---
 const buddyBubble = document.getElementById('buddyBubble');
 const buddyImg = document.getElementById('buddy-img');
 const buddyContainer = document.getElementById('buddy-container');
 let bubbleTimer;
 let isDraggingBuddy = false;
 
+// VARIÁVEIS DA DANÇA
+let idleTimer = null;
+let danceDurationTimer = null;
+let isDancing = false;
+const danceImages = ['assets/danca1.gif', 'assets/danca2.gif', 'assets/danca3.gif', 'assets/danca4.gif'];
+
 function buddyTalk(msg) {
     buddyBubble.innerText = msg;
     buddyBubble.style.display = 'block';
+    speakText(msg); 
     clearTimeout(bubbleTimer);
-    bubbleTimer = setTimeout(() => {
-        buddyBubble.style.display = 'none';
-    }, 4000); 
+    bubbleTimer = setTimeout(() => { buddyBubble.style.display = 'none'; }, 4000); 
 }
 
 function interactBuddy() {
+    stopDance();
     if (isDraggingBuddy) return;
     const interacoes = ["Isso faz cócegas!", "Estou processando dados...", "Uiiii! Não me aperte."];
     const r = Math.floor(Math.random() * interacoes.length);
@@ -369,9 +696,9 @@ function interactBuddy() {
 let bOx, bOy, bDown = false;
 function dragBuddy(e) {
     e.stopPropagation();
+    stopDance();
     bDown = true;
     isDraggingBuddy = false;
-    
     const startX = e.clientX;
     const startY = e.clientY;
 
@@ -388,10 +715,11 @@ function dragBuddy(e) {
     document.onmousemove = ev => {
         if (bDown) {
             if (Math.abs(ev.clientX - startX) > 3 || Math.abs(ev.clientY - startY) > 3) {
+                if(isDancing) stopDance();
                 if(!isDraggingBuddy) {
                     isDraggingBuddy = true;
                     buddyContainer.classList.add('buddy-dragging');
-                    buddyImg.src = 'assets/spantu_drag.png'; // MUDA IMAGEM AO ARRASTAR
+                    buddyImg.src = 'assets/spantu_drag.png'; 
                     buddyTalk("Aonde vamos?");
                 }
             }
@@ -404,12 +732,101 @@ function dragBuddy(e) {
         if (bDown) {
             bDown = false;
             buddyContainer.classList.remove('buddy-dragging');
-            buddyImg.src = 'assets/spantu.png'; // VOLTA IMAGEM AO SOLTAR
+            if(!isDancing) { buddyImg.src = 'assets/spantu.png'; }
             setTimeout(() => { isDraggingBuddy = false; }, 100);
+            resetIdleTimer();
         }
     }
 }
-</script>
 
+// --- LÓGICA DA DANÇA ---
+function resetIdleTimer() {
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => { startDance(); }, 120000); // 3 min
+}
+
+function stopDance() {
+   if(!isDancing) return;
+   isDancing = false;
+   if(danceDurationTimer) clearTimeout(danceDurationTimer);
+   buddyImg.src = 'assets/spantu.png';
+   resetIdleTimer();
+}
+
+function startDance() {
+    if (isDancing || isDraggingBuddy || document.getElementById('bsod').style.display === 'block') {
+        resetIdleTimer();
+        return;
+    }
+    isDancing = true;
+    buddyTalk("Hora do show!");
+    const randomIndex = Math.floor(Math.random() * danceImages.length);
+    const selectedImage = danceImages[randomIndex];
+    
+    // Simulação das imagens de dança (fallback caso não existam)
+    buddyImg.src = selectedImage; 
+    
+    danceDurationTimer = setTimeout(() => {
+        stopDance();
+    }, 30000);
+}
+
+function startRandomTalkLoop() {
+    setTimeout(() => {
+        if (!isDancing && !isDraggingBuddy && Math.random() > 0.7) {
+            const randomPhrases = [
+                    "Vai tomar no cu hakoon", 
+                    "Tem algo errado com a lixeira...",
+                    "Você viu? Piscou.",
+                    "Bip bop... eu odeio essa tela.",
+                    "Por que você não abre o segredo?",
+                    "Eu sinto o shadow no meu brioco.",
+                    "O mouse parou de mexer... brincadeira.",
+                    "Hakoon precisa de um café.",
+                    "Inicializando sistema… erro encontrado: Hakoon pensando demais. Reiniciando.",
+                    "Hakoon, se concentração queimasse caloria você já tinha virado um deus menor.",
+                    "Salem entrou na sala. Estatísticas atualizadas: chance de dar ruim aumentou em 73%.",
+                    "Guilherme, seu plano é ousado… ousadamente errado.",
+                    "Letícia desbloqueou a habilidade passiva 'parece normal até falar'.",
+                    "Analisando grupo… conclusão: isso não é uma party, é um experimento social.",
+                    "Hakoon, você quer uma estratégia ou um milagre? Porque só um deles eu posso tentar.",
+                    "Salem dizendo 'confia em mim' detectado. Protocolo de pânico ativado.",
+                    "Guilherme, parabéns, você conseguiu errar algo que nem tinha teste.",
+                    "Letícia, seu silêncio é preocupante. Geralmente ele antecede uma ideia perigosa.",
+                    "Atualização do sistema: nenhum de vocês leu o manual. De novo.",
+                    "Hakoon tentando liderar. Resultado: democracia entrou em colapso.",
+                    "Salem tem uma ideia. Estatisticamente, isso é uma ameaça.",
+                    "Guilherme, você apertou o botão errado. Não. O outro errado.",
+                    "Letícia, você percebeu algo importante… pena que ninguém vai ouvir.",
+                    "Rodando diagnóstico emocional… todos estão confiantes. Isso é ruim.",
+                    "Hakoon, sua coragem é admirável. Sua noção das consequências, não.",
+                    "Salem age primeiro, pensa depois. Às vezes nem isso.",
+                    "Guilherme, sua sorte está abaixo de zero. Isso nem deveria ser possível.",
+                    "Letícia, você é a voz da razão… num grupo que ignora a razão.",
+                    "Simulação de futuro em andamento… resultado: gritos.",
+                    "Hakoon, você não está errado. Só está perigosamente otimista.",
+                    "Salem, isso não é um plano, é um pedido de desculpas antecipado.",
+                    "Guilherme conseguiu sobreviver. Estatística improvável registrada.",
+                    "Letícia, você acabou de salvar todo mundo sem perceber. De novo.",
+                    "Analisando chances de sucesso… recalculando… rindo… recalculando.",
+                    "Vocês sabiam que 90% das tragédias começam exatamente assim?",
+                    "Nota mental: nunca confiar nesse grupo com botões vermelhos.",
+                    "Se der tudo certo, foi sem querer.",
+                    "Se der tudo errado… bom, vocês já esperavam.",
+                    "Encerrando fala motivacional: boa sorte. Vocês vão precisar mais do que eu.",
+                    "Demiurgo esta observando, cuidado",
+                    "Gostamos de rosa, hehe",
+                    "Sabia que cadeirantes morrem ao cair de um canyon? Interessante hehe",
+                    "Uma ameaça foi detectada"
+            ];
+            const r = Math.floor(Math.random() * randomPhrases.length);
+            buddyTalk(randomPhrases[r]);
+        }
+        startRandomTalkLoop();
+    }, 5000 + Math.random() * 5000);
+}
+
+resetIdleTimer();
+</script>
 </body>
 </html>
