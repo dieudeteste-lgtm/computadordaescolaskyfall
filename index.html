@@ -21,6 +21,9 @@ body{margin:0;height:100vh;font-family:Tahoma,Verdana,sans-serif;background:#000
 .start-menu div{padding:8px;font-size:13px;cursor:pointer}
 .start-menu div:hover{background:#000080;color:#fff}
 
+/* MENU DE CONTEXTO (CLIQUE DIREITO) */
+#contextMenu { display: none; } /* Inicialmente oculto */
+
 /* JANELAS PADRÃO */
 .window{position:absolute;top:15%;left:20%;width:380px;background:#ece9d8;border:2px solid #000080;box-shadow:4px 4px 0 rgba(0,0,0,.4);display:none; z-index: 100;}
 .titlebar{background:linear-gradient(#000080,#000060);color:#fff;padding:4px 8px;font-size:13px;cursor:move; display:flex; justify-content:space-between; align-items:center;}
@@ -142,8 +145,15 @@ canvas { background: #fff; cursor: crosshair; display: block; box-shadow: 2px 2p
 <body>
 
 <div id="boot">Iniciando Windows 2000<span>_</span></div>
+<input type="file" id="wallpaperInput" accept="image/*" style="display:none" onchange="updateWallpaper(this)">
 <input type="file" id="imgUploadInput" accept="image/*" style="display:none">
 <input type="file" id="loadBoardInput" accept=".json" style="display:none" onchange="loadBoard(this)">
+
+<div id="contextMenu" class="start-menu" style="width: 180px; position: fixed; z-index: 9999;">
+    <div onclick="triggerWallpaperUpload()">Definir Papel de Parede</div>
+    <div style="border-top: 1px solid #808080; margin: 2px 0;"></div>
+    <div onclick="location.reload()">Atualizar Sistema</div>
+</div>
 
 <div id="desktop">
   <div class="icons" onclick="initAudio()">
@@ -169,6 +179,7 @@ canvas { background: #fff; cursor: crosshair; display: block; box-shadow: 2px 2p
 
   <div class="start-menu" id="startMenu">
     <div onclick="openExplorer()">Meus Arquivos</div>
+    <div onclick="triggerWallpaperUpload()">Mudar Papel de Parede</div>
     <div onclick="openPaint()">Paint</div> 
     <div onclick="openCalc()">Calculadora</div>
     <div onclick="openNotes()">Investigação</div>
@@ -827,7 +838,50 @@ function startRandomTalkLoop() {
 }
 
 resetIdleTimer();
+
+// --- SISTEMA DE WALLPAPER E MENU DE CONTEXTO ---
+function triggerWallpaperUpload() {
+    document.getElementById('wallpaperInput').click();
+    document.getElementById('startMenu').style.display='none'; // Fecha o menu iniciar se estiver aberto
+}
+
+function updateWallpaper(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('desktop').style.backgroundImage = `url('${e.target.result}')`;
+            buddyTalk("Bela escolha de decoração!");
+        };
+        reader.readAsDataURL(file);
+    }
+    input.value = ''; 
+}
+
+// Lógica do clique com botão direito
+const desktopDiv = document.getElementById('desktop');
+const contextMenu = document.getElementById('contextMenu');
+
+desktopDiv.addEventListener('contextmenu', function(e) {
+    // Evita abrir se clicar em ícones, barra de tarefas, janelas ou no buddy
+    if (e.target.closest('.window') || e.target.closest('.icon') || e.target.closest('.taskbar') || e.target.closest('#buddy-container')) return;
+    
+    e.preventDefault();
+    contextMenu.style.display = 'block';
+    
+    // Ajuste simples para o menu não sair da tela
+    let x = e.clientX;
+    let y = e.clientY;
+    if(x + 180 > window.innerWidth) x -= 180;
+    
+    contextMenu.style.left = x + 'px';
+    contextMenu.style.top = y + 'px';
+});
+
+// Fechar menu ao clicar fora
+window.addEventListener('click', function() {
+    if(contextMenu) contextMenu.style.display = 'none';
+});
 </script>
 </body>
 </html>
-
