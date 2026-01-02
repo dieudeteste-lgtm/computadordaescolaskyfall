@@ -148,9 +148,13 @@ canvas { background: #fff; cursor: crosshair; display: block; box-shadow: 2px 2p
 <input type="file" id="wallpaperInput" accept="image/*" style="display:none" onchange="updateWallpaper(this)">
 <input type="file" id="imgUploadInput" accept="image/*" style="display:none">
 <input type="file" id="loadBoardInput" accept=".json" style="display:none" onchange="loadBoard(this)">
+<input type="file" id="loadSystemInput" accept=".json" style="display:none" onchange="loadSystem(this)">
 
-<div id="contextMenu" class="start-menu" style="width: 180px; position: fixed; z-index: 9999;">
+<div id="contextMenu" class="start-menu" style="width: 200px; position: fixed; z-index: 9999;">
     <div onclick="triggerWallpaperUpload()">Definir Papel de Parede</div>
+    <div style="border-top: 1px solid #808080; margin: 2px 0;"></div>
+    <div onclick="saveSystem()">💾 Salvar Estado do PC</div>
+    <div onclick="document.getElementById('loadSystemInput').click()">📂 Carregar Estado do PC</div>
     <div style="border-top: 1px solid #808080; margin: 2px 0;"></div>
     <div onclick="location.reload()">Atualizar Sistema</div>
 </div>
@@ -365,8 +369,8 @@ const expAddress = document.getElementById('expAddress');
 let currentPath = "C:";
 let editingFile = null; // Para saber qual arquivo estamos editando
 
-// Sistema de arquivos virtual
-const fileSystem = {
+// Sistema de arquivos virtual (AGORA COM 'LET' PARA PERMITIR SOBRESCRITA)
+let fileSystem = {
     "C:": [
         { name: "Meus Documentos", type: "folder" },
         { name: "Windows", type: "folder" },
@@ -872,7 +876,7 @@ desktopDiv.addEventListener('contextmenu', function(e) {
     // Ajuste simples para o menu não sair da tela
     let x = e.clientX;
     let y = e.clientY;
-    if(x + 180 > window.innerWidth) x -= 180;
+    if(x + 200 > window.innerWidth) x -= 200;
     
     contextMenu.style.left = x + 'px';
     contextMenu.style.top = y + 'px';
@@ -882,6 +886,78 @@ desktopDiv.addEventListener('contextmenu', function(e) {
 window.addEventListener('click', function() {
     if(contextMenu) contextMenu.style.display = 'none';
 });
+
+// --- SISTEMA DE SAVE/LOAD COMPLETO (STATE) ---
+function saveSystem() {
+    play();
+    
+    const currentWallpaper = document.getElementById('desktop').style.backgroundImage;
+    const secretUnlocked = localStorage.getItem('unlocked');
+    const lore1 = localStorage.getItem('lore1');
+    const lore2 = localStorage.getItem('lore2');
+
+    const saveState = {
+        timestamp: Date.now(),
+        fileSystem: fileSystem, // Salva todos os arquivos e pastas criados
+        wallpaper: currentWallpaper,
+        settings: {
+            unlocked: secretUnlocked,
+            lore1: lore1,
+            lore2: lore2
+        }
+    };
+
+    const blob = new Blob([JSON.stringify(saveState)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'backup_windows2000_' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    buddyTalk("Backup do sistema salvo! Guarde bem.");
+}
+
+function loadSystem(input) {
+    play();
+    const file = input.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+
+            if(data.fileSystem) {
+                fileSystem = data.fileSystem;
+                if(document.getElementById('explorerWindow').style.display === 'flex') {
+                    renderExplorer(currentPath);
+                }
+            }
+
+            if(data.wallpaper) {
+                document.getElementById('desktop').style.backgroundImage = data.wallpaper;
+            }
+
+            if(data.settings) {
+                if(data.settings.unlocked) localStorage.setItem('unlocked', data.settings.unlocked);
+                if(data.settings.lore1) localStorage.setItem('lore1', data.settings.lore1);
+                if(data.settings.lore2) localStorage.setItem('lore2', data.settings.lore2);
+            }
+
+            buddyTalk("Sistema restaurado com sucesso!");
+
+        } catch(err) {
+            console.error(err);
+            buddyTalk("Erro ao ler o arquivo de sistema. Está corrompido?");
+            alert("Erro: Arquivo de save inválido.");
+        }
+    };
+    reader.readAsText(file);
+    input.value = ''; 
+}
 </script>
 </body>
 </html>
