@@ -2,31 +2,87 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Windows 2000 Simulator</title>
+<title>Windows 2000 Simulator + Buddy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{box-sizing:border-box;user-select:none;cursor:url('assets/cursor.cur'),default}
 body{margin:0;height:100vh;font-family:Tahoma,Verdana,sans-serif;background:#000;overflow:hidden}
-#boot{position:fixed;inset:0;background:#000;color:#ccc;display:flex;align-items:center;justify-content:center;font-size:18px}
+#boot{position:fixed;inset:0;background:#000;color:#ccc;display:flex;align-items:center;justify-content:center;font-size:18px; z-index: 9999;}
 #boot span{animation:blink 1s steps(2,start) infinite}
 @keyframes blink{to{visibility:hidden}}
-#desktop{display:none;height:100vh;background:url('assets/wallpaper.jpg') center/cover no-repeat}
+#desktop{display:none;height:100vh;background:url('assets/wallpaper.jpg') center/cover no-repeat; position: relative;}
 .icons{padding:20px;color:#fff}
 .icon{width:90px;text-align:center;margin-bottom:28px;cursor:pointer}
 .icon img{width:48px;height:48px}
 .icon span{display:block;font-size:13px;text-shadow:1px 1px 2px #000}
-.taskbar{position:absolute;bottom:0;left:0;width:100%;height:32px;background:linear-gradient(#245edb,#1941a5);display:flex;align-items:center;padding:0 6px;color:#fff;font-size:13px}
+.taskbar{position:absolute;bottom:0;left:0;width:100%;height:32px;background:linear-gradient(#245edb,#1941a5);display:flex;align-items:center;padding:0 6px;color:#fff;font-size:13px; z-index: 1000;}
 .start-btn{background:linear-gradient(#3aa655,#2e7d32);padding:4px 12px;border-radius:3px;font-weight:bold;cursor:pointer}
-.start-menu{position:absolute;bottom:32px;left:0;width:220px;background:#ece9d8;border:2px solid #000080;display:none}
+.start-menu{position:absolute;bottom:32px;left:0;width:220px;background:#ece9d8;border:2px solid #000080;display:none; z-index: 2000;}
 .start-menu div{padding:8px;font-size:13px;cursor:pointer}
 .start-menu div:hover{background:#000080;color:#fff}
-.window{position:absolute;top:25%;left:40%;width:380px;background:#ece9d8;border:2px solid #000080;box-shadow:4px 4px 0 rgba(0,0,0,.4);display:none}
+.window{position:absolute;top:25%;left:40%;width:380px;background:#ece9d8;border:2px solid #000080;box-shadow:4px 4px 0 rgba(0,0,0,.4);display:none; z-index: 100;}
 .titlebar{background:linear-gradient(#000080,#000060);color:#fff;padding:4px 8px;font-size:13px;cursor:move}
 .content{padding:16px;font-size:14px;color:#000}
 input{width:100%;padding:6px;margin-top:10px}
 button{padding:6px 12px;font-size:13px;margin-top:10px}
-#bsod{display:none;position:fixed;inset:0;background:#0000aa;color:#fff;font-family:Courier New,monospace;padding:40px;font-size:16px}
+#bsod{display:none;position:fixed;inset:0;background:#0000aa;color:#fff;font-family:Courier New,monospace;padding:40px;font-size:16px; z-index: 10000;}
 a{color:inherit;text-decoration:none}
+
+/* ESTILO DO PAINT */
+#paintWindow { top: 15%; left: 15%; width: 500px; height: auto; display: none; z-index: 101; }
+.paint-toolbar { background: #c0c0c0; padding: 5px; display: flex; gap: 5px; border-bottom: 1px solid #808080; align-items: center; }
+.color-swatch { width: 20px; height: 20px; border: 1px solid #000; cursor: pointer; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; }
+.paint-canvas-container { background: #808080; padding: 10px; overflow: hidden; }
+canvas { background: #fff; cursor: crosshair; display: block; box-shadow: 2px 2px 0 #000; touch-action: none; }
+.paint-btn { margin: 0; padding: 2px 8px; font-size: 11px; }
+
+/* ESTILO DO BUDDY */
+#buddy-container { 
+    position: absolute; 
+    bottom: 40px; 
+    right: 20px; 
+    width: 120px; 
+    height: 120px; 
+    z-index: 200; 
+    cursor: grab; 
+    pointer-events: auto; 
+}
+#buddy-container:active { cursor: grabbing; }
+
+#buddy-img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); transition: transform 0.1s;}
+/* Efeito visual opcional quando arrastando */
+.buddy-dragging #buddy-img { transform: scale(1.1) rotate(5deg); opacity: 0.8; }
+
+.bubble { 
+    position: absolute; 
+    bottom: 100%; 
+    left: 50%;
+    transform: translateX(-50%); 
+    background: #ffffe1; 
+    border: 1px solid #000; 
+    padding: 10px; 
+    border-radius: 4px; 
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
+    font-size: 12px; 
+    color: #000; 
+    width: 160px; 
+    display: none; 
+    z-index: 201; 
+    text-align: center;
+    margin-bottom: 10px; 
+}
+.bubble:after { 
+    content: ''; 
+    position: absolute; 
+    bottom: -10px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    border-width: 10px 10px 0; 
+    border-style: solid; 
+    border-color: #ffffe1 transparent; 
+    display: block; 
+    width: 0; 
+}
 </style>
 </head>
 
@@ -36,11 +92,17 @@ a{color:inherit;text-decoration:none}
 
 <div id="desktop">
   <div class="icons" onclick="initAudio()">
-    <div class="icon" onclick="openSecret()"><img src="assets/secret.png"><span>Segredo</span></div>
-    <div class="icon"><a href="https://www.google.com" target="_blank"><img src="assets/internet.png"><span>Internet</span></a></div>
-    <div class="icon" onclick="location.href='vpn.html'"><img src="assets/vpn.png"><span>VPN</span></div>
-    <div class="icon"><a href="https://www.roblox.com" target="_blank"><img src="assets/roblox.png"><span>RUblux</span></a></div>
-    <div class="icon"><a href="https://skyfallcontributors.tiiny.site/" target="_blank"><img src="assets/users.png"><span>Contribuidores</span></a></div>
+    <div class="icon" onclick="openSecret()"><img src="assets/secret.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/key_padlock.png'"><span>Segredo</span></div>
+    <div class="icon"><a href="https://www.google.com" target="_blank"><img src="assets/internet.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/msie1.png'"><span>Internet</span></a></div>
+    <div class="icon" onclick="location.href='vpn.html'"><img src="assets/vpn.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/network_cool_two_pcs.png'"><span>VPN</span></div>
+    <div class="icon"><a href="https://www.roblox.com" target="_blank"><img src="assets/roblox.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg'"><span>RUblux</span></a></div>
+    <div class="icon" onclick="openPaint()"><img src="assets/paint.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/paint_file-2.png'"><span>Paint</span></div>
+    <div class="icon"><a href="https://skyfallcontributors.tiiny.site/" target="_blank"><img src="assets/users.png" onerror="this.src='https://win98icons.alexmeub.com/icons/png/users-2.png'"><span>Contribuidores</span></a></div>
+  </div>
+
+  <div id="buddy-container" onmousedown="dragBuddy(event)" onclick="interactBuddy()">
+     <div class="bubble" id="buddyBubble">Me solta! Hahaha!</div>
+     <img id="buddy-img" src="assets/spantu.png" alt="Buddy">
   </div>
 
   <div class="taskbar">
@@ -49,7 +111,7 @@ a{color:inherit;text-decoration:none}
 
   <div class="start-menu" id="startMenu">
     <div onclick="openExplorer()">Meus Arquivos</div>
-    <div onclick="openSecret()">Segredo</div>
+    <div onclick="openPaint()">Paint</div> <div onclick="openSecret()">Segredo</div>
     <div onclick="triggerBSOD()">Sistema</div>
     <div onclick="desligar()">Desligar</div>
   </div>
@@ -57,6 +119,23 @@ a{color:inherit;text-decoration:none}
   <div class="window" id="window">
     <div class="titlebar" onmousedown="drag(event)">Sistema</div>
     <div class="content" id="windowContent"></div>
+  </div>
+
+  <div class="window" id="paintWindow">
+    <div class="titlebar" onmousedown="dragPaint(event)">Sem título - Paint</div>
+    <div class="paint-toolbar">
+        <div class="color-swatch" style="background:#000" onclick="setPaintColor('#000')"></div>
+        <div class="color-swatch" style="background:#f00" onclick="setPaintColor('#f00')"></div>
+        <div class="color-swatch" style="background:#00f" onclick="setPaintColor('#00f')"></div>
+        <div class="color-swatch" style="background:#0f0" onclick="setPaintColor('#0f0')"></div>
+        <div class="color-swatch" style="background:#ff0" onclick="setPaintColor('#ff0')"></div>
+        <div class="color-swatch" style="background:#fff" onclick="setPaintColor('#fff')"></div>
+        <button class="paint-btn" onclick="clearCanvas()">Limpar</button>
+        <button class="paint-btn" onclick="closePaint()">X</button>
+    </div>
+    <div class="paint-canvas-container">
+        <canvas id="canvas" width="460" height="300"></canvas>
+    </div>
   </div>
 </div>
 
@@ -66,7 +145,6 @@ STOP: 0x0000007B<br><br>
 Pressione F5 para reiniciar.
 </div>
 
-<!-- ÁUDIOS -->
 <audio id="click" src="assets/click.wav" preload="auto"></audio>
 <audio id="bootSound" src="assets/windows2000.wav" preload="auto"></audio>
 
@@ -75,7 +153,6 @@ let audioUnlocked=false
 const click=document.getElementById('click')
 const bootSound=document.getElementById('bootSound')
 
-// desbloqueia áudio e toca som de boot
 function initAudio(){
   if(audioUnlocked) return
   click.play().then(()=>{
@@ -83,6 +160,7 @@ function initAudio(){
     click.currentTime=0
     audioUnlocked=true
     playBootSound()
+    buddyTalk("Bem-vindo de volta, usuário.");
   }).catch(()=>{})
 }
 
@@ -103,7 +181,6 @@ function play(){
   }
 }
 
-// transição do boot
 setTimeout(()=>{
   document.getElementById('boot').style.display='none'
   document.getElementById('desktop').style.display='block'
@@ -132,6 +209,7 @@ function openFile(id){
   if(id===1){
     showWindow('"Eles sabiam desde 2000."<br><br><button onclick="fechar()">Fechar</button>')
     localStorage.setItem('lore1','true')
+    buddyTalk("Você não deveria ter lido isso...");
   }else{
     showWindow('Pasta corrompida<br>CÓDIGO:???<br><button onclick="fechar()">Fechar</button>')
     localStorage.setItem('lore2','true')
@@ -143,6 +221,7 @@ function openSecret(){
     showWindow('ACESSO LIBERADO<br>O véu caiu.<br><br><button onclick="fechar()">Fechar</button>')
   }else{
     showWindow('Digite a senha:<input id="pwd" type="password"><button onclick="checkPwd()">OK</button><button onclick="fechar()">Cancelar</button>')
+    buddyTalk("A senha? Talvez o 'olvido' saiba.");
   }
 }
 
@@ -151,8 +230,10 @@ function checkPwd(){
   if(v==='o involucro do veu esconde a dor do olvido'){
     localStorage.setItem('unlocked','true')
     showWindow('ACESSO CONCEDIDO<br>Memória restaurada.<br><button onclick="fechar()">Fechar</button>')
+    buddyTalk("Finalmente... liberdade.");
   }else{
     showWindow('Senha incorreta<br><button onclick="fechar()">Fechar</button>')
+    buddyTalk("Errado. Tente novamente.");
   }
 }
 
@@ -173,7 +254,6 @@ function desligar(){
   document.body.innerHTML='<div style="background:#000;color:#fff;height:100vh;display:flex;align-items:center;justify-content:center">Agora é seguro desligar o computador</div>'
 }
 
-// drag janela
 let ox,oy,down=false
 function drag(e){
   down=true
@@ -188,8 +268,148 @@ function drag(e){
   }
   document.onmouseup=()=>{down=false}
 }
+
+// PAINT LOGIC
+const paintWindow = document.getElementById('paintWindow');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let painting = false;
+let paintColor = '#000';
+
+ctx.lineWidth = 2;
+ctx.lineCap = 'round';
+ctx.fillStyle = '#fff';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+function openPaint() {
+    play();
+    paintWindow.style.display = 'block';
+    document.getElementById('startMenu').style.display = 'none';
+    buddyTalk("Desenhe algo bonito para mim!");
+}
+
+function closePaint() {
+    paintWindow.style.display = 'none';
+}
+
+function setPaintColor(color) {
+    paintColor = color;
+    ctx.strokeStyle = color;
+}
+
+function clearCanvas() {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+canvas.addEventListener('mousedown', startPosition);
+canvas.addEventListener('mouseup', finishedPosition);
+canvas.addEventListener('mousemove', draw);
+
+function startPosition(e) {
+    painting = true;
+    draw(e);
+}
+
+function finishedPosition() {
+    painting = false;
+    ctx.beginPath();
+}
+
+function draw(e) {
+    if (!painting) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    ctx.strokeStyle = paintColor;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+let pOx, pOy, pDown = false;
+function dragPaint(e) {
+  pDown = true;
+  const w = document.getElementById('paintWindow');
+  pOx = e.clientX - w.offsetLeft;
+  pOy = e.clientY - w.offsetTop;
+  document.onmousemove = ev => {
+    if (pDown) {
+      w.style.left = ev.clientX - pOx + 'px';
+      w.style.top = ev.clientY - pOy + 'px';
+    }
+  }
+  document.onmouseup = () => { pDown = false; }
+}
+
+// --- SISTEMA DO BUDDY (UPDATE: DRAG IMAGE) ---
+const buddyBubble = document.getElementById('buddyBubble');
+const buddyImg = document.getElementById('buddy-img');
+const buddyContainer = document.getElementById('buddy-container');
+let bubbleTimer;
+let isDraggingBuddy = false;
+
+function buddyTalk(msg) {
+    buddyBubble.innerText = msg;
+    buddyBubble.style.display = 'block';
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(() => {
+        buddyBubble.style.display = 'none';
+    }, 4000); 
+}
+
+function interactBuddy() {
+    if (isDraggingBuddy) return;
+    const interacoes = ["Isso faz cócegas!", "Estou processando dados...", "Uiiii! Não me aperte."];
+    const r = Math.floor(Math.random() * interacoes.length);
+    buddyTalk(interacoes[r]);
+}
+
+let bOx, bOy, bDown = false;
+function dragBuddy(e) {
+    e.stopPropagation();
+    bDown = true;
+    isDraggingBuddy = false;
+    
+    const startX = e.clientX;
+    const startY = e.clientY;
+
+    if (!buddyContainer.style.left) {
+        buddyContainer.style.left = buddyContainer.offsetLeft + 'px';
+        buddyContainer.style.top = buddyContainer.offsetTop + 'px';
+        buddyContainer.style.bottom = 'auto';
+        buddyContainer.style.right = 'auto';
+    }
+
+    bOx = e.clientX - buddyContainer.offsetLeft;
+    bOy = e.clientY - buddyContainer.offsetTop;
+
+    document.onmousemove = ev => {
+        if (bDown) {
+            if (Math.abs(ev.clientX - startX) > 3 || Math.abs(ev.clientY - startY) > 3) {
+                if(!isDraggingBuddy) {
+                    isDraggingBuddy = true;
+                    buddyContainer.classList.add('buddy-dragging');
+                    buddyImg.src = 'assets/spantu_drag.png'; // MUDA IMAGEM AO ARRASTAR
+                    buddyTalk("Aonde vamos?");
+                }
+            }
+            buddyContainer.style.left = (ev.clientX - bOx) + 'px';
+            buddyContainer.style.top = (ev.clientY - bOy) + 'px';
+        }
+    }
+
+    document.onmouseup = () => {
+        if (bDown) {
+            bDown = false;
+            buddyContainer.classList.remove('buddy-dragging');
+            buddyImg.src = 'assets/spantu.png'; // VOLTA IMAGEM AO SOLTAR
+            setTimeout(() => { isDraggingBuddy = false; }, 100);
+        }
+    }
+}
 </script>
 
 </body>
 </html>
-
