@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Windows 2000 Simulator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;user-select:none;cursor:url('assets/cursor.cur'),default}
+body{margin:0;height:100vh;font-family:Tahoma,Verdana,sans-serif;background:#000;overflow:hidden}
+#boot{position:fixed;inset:0;background:#000;color:#ccc;display:flex;align-items:center;justify-content:center;font-size:18px}
+#boot span{animation:blink 1s steps(2,start) infinite}
+@keyframes blink{to{visibility:hidden}}
+#desktop{display:none;height:100vh;background:url('assets/wallpaper.jpg') center/cover no-repeat}
+.icons{padding:20px;color:#fff}
+.icon{width:90px;text-align:center;margin-bottom:28px;cursor:pointer}
+.icon img{width:48px;height:48px}
+.icon span{display:block;font-size:13px;text-shadow:1px 1px 2px #000}
+.taskbar{position:absolute;bottom:0;left:0;width:100%;height:32px;background:linear-gradient(#245edb,#1941a5);display:flex;align-items:center;padding:0 6px;color:#fff;font-size:13px}
+.start-btn{background:linear-gradient(#3aa655,#2e7d32);padding:4px 12px;border-radius:3px;font-weight:bold;cursor:pointer}
+.start-menu{position:absolute;bottom:32px;left:0;width:220px;background:#ece9d8;border:2px solid #000080;display:none}
+.start-menu div{padding:8px;font-size:13px;cursor:pointer}
+.start-menu div:hover{background:#000080;color:#fff}
+.window{position:absolute;top:25%;left:40%;width:380px;background:#ece9d8;border:2px solid #000080;box-shadow:4px 4px 0 rgba(0,0,0,.4);display:none}
+.titlebar{background:linear-gradient(#000080,#000060);color:#fff;padding:4px 8px;font-size:13px;cursor:move}
+.content{padding:16px;font-size:14px;color:#000}
+input{width:100%;padding:6px;margin-top:10px}
+button{padding:6px 12px;font-size:13px;margin-top:10px}
+#bsod{display:none;position:fixed;inset:0;background:#0000aa;color:#fff;font-family:Courier New,monospace;padding:40px;font-size:16px}
+a{color:inherit;text-decoration:none}
+</style>
+</head>
+
+<body>
+
+<div id="boot">Iniciando Windows 2000<span>_</span></div>
+
+<div id="desktop">
+  <div class="icons" onclick="initAudio()">
+    <div class="icon" onclick="openSecret()"><img src="assets/secret.png"><span>Segredo</span></div>
+    <div class="icon"><a href="https://www.google.com" target="_blank"><img src="assets/internet.png"><span>Internet</span></a></div>
+    <div class="icon" onclick="location.href='vpn.html'"><img src="assets/vpn.png"><span>VPN</span></div>
+    <div class="icon"><a href="https://www.roblox.com" target="_blank"><img src="assets/roblox.png"><span>RUblux</span></a></div>
+    <div class="icon"><a href="https://skyfallcontributors.tiiny.site/" target="_blank"><img src="assets/users.png"><span>Contribuidores</span></a></div>
+  </div>
+
+  <div class="taskbar">
+    <div class="start-btn" onclick="toggleStart()">Iniciar</div>
+  </div>
+
+  <div class="start-menu" id="startMenu">
+    <div onclick="openExplorer()">Meus Arquivos</div>
+    <div onclick="openSecret()">Segredo</div>
+    <div onclick="triggerBSOD()">Sistema</div>
+    <div onclick="desligar()">Desligar</div>
+  </div>
+
+  <div class="window" id="window">
+    <div class="titlebar" onmousedown="drag(event)">Sistema</div>
+    <div class="content" id="windowContent"></div>
+  </div>
+</div>
+
+<div id="bsod">
+Um problema foi detectado e o Windows foi desligado para evitar danos.<br><br>
+STOP: 0x0000007B<br><br>
+Pressione F5 para reiniciar.
+</div>
+
+<!-- ÁUDIOS -->
+<audio id="click" src="assets/click.wav" preload="auto"></audio>
+<audio id="bootSound" src="assets/windows2000.wav" preload="auto"></audio>
+
+<script>
+let audioUnlocked=false
+const click=document.getElementById('click')
+const bootSound=document.getElementById('bootSound')
+
+// desbloqueia áudio e toca som de boot
+function initAudio(){
+  if(audioUnlocked) return
+  click.play().then(()=>{
+    click.pause()
+    click.currentTime=0
+    audioUnlocked=true
+    playBootSound()
+  }).catch(()=>{})
+}
+
+function playBootSound(){
+  if(!audioUnlocked) return
+  bootSound.currentTime=0
+  bootSound.play()
+  setTimeout(()=>{
+    bootSound.pause()
+    bootSound.currentTime=0
+  },6000)
+}
+
+function play(){
+  if(audioUnlocked){
+    click.currentTime=0
+    click.play()
+  }
+}
+
+// transição do boot
+setTimeout(()=>{
+  document.getElementById('boot').style.display='none'
+  document.getElementById('desktop').style.display='block'
+},2500)
+
+function toggleStart(){
+  play()
+  const m=document.getElementById('startMenu')
+  m.style.display=m.style.display==='block'?'none':'block'
+}
+
+function showWindow(html){
+  play()
+  const w=document.getElementById('window')
+  document.getElementById('windowContent').innerHTML=html
+  w.style.display='block'
+}
+
+function fechar(){document.getElementById('window').style.display='none'}
+
+function openExplorer(){
+  showWindow('<b>Meus Arquivos</b><br><br><div onclick="openFile(1)">📄 diario.txt</div><div onclick="openFile(2)">📁 registros</div><br><button onclick="fechar()">Fechar</button>')
+}
+
+function openFile(id){
+  if(id===1){
+    showWindow('"Eles sabiam desde 2000."<br><br><button onclick="fechar()">Fechar</button>')
+    localStorage.setItem('lore1','true')
+  }else{
+    showWindow('Pasta corrompida<br>CÓDIGO: SKYFALL-OLVIDO<br><button onclick="fechar()">Fechar</button>')
+    localStorage.setItem('lore2','true')
+  }
+}
+
+function openSecret(){
+  if(localStorage.getItem('unlocked')){
+    showWindow('ACESSO LIBERADO<br>O véu caiu.<br><br><button onclick="fechar()">Fechar</button>')
+  }else{
+    showWindow('Digite a senha:<input id="pwd" type="password"><button onclick="checkPwd()">OK</button><button onclick="fechar()">Cancelar</button>')
+  }
+}
+
+function checkPwd(){
+  const v=document.getElementById('pwd').value.toLowerCase()
+  if(v==='o involucro do veu esconde a dor do olvido'){
+    localStorage.setItem('unlocked','true')
+    showWindow('ACESSO CONCEDIDO<br>Memória restaurada.<br><button onclick="fechar()">Fechar</button>')
+  }else{
+    showWindow('Senha incorreta<br><button onclick="fechar()">Fechar</button>')
+  }
+}
+
+function triggerBSOD(){
+  play()
+  document.getElementById('desktop').style.display='none'
+  document.getElementById('bsod').style.display='block'
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='F5'){
+    localStorage.clear()
+    location.reload()
+  }
+})
+
+function desligar(){
+  document.body.innerHTML='<div style="background:#000;color:#fff;height:100vh;display:flex;align-items:center;justify-content:center">Agora é seguro desligar o computador</div>'
+}
+
+// drag janela
+let ox,oy,down=false
+function drag(e){
+  down=true
+  const w=document.getElementById('window')
+  ox=e.clientX-w.offsetLeft
+  oy=e.clientY-w.offsetTop
+  document.onmousemove=ev=>{
+    if(down){
+      w.style.left=ev.clientX-ox+'px'
+      w.style.top=ev.clientY-oy+'px'
+    }
+  }
+  document.onmouseup=()=>{down=false}
+}
+</script>
+
+</body>
+</html>
